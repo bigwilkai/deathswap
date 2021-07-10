@@ -1,0 +1,22 @@
+# The amount of time between Swaps in seconds. (Default is 300 seconds (5 minutes)
+# Default: 300
+swapInterval: 300
+
+# The amount of time that the swap interval can vary +/- in seconds. (Default is 120 seconds (2 minutes) This means that default swap time is between 3 and 7 minutes.
+# Default: 120
+swapIntervalVariation: 120
+
+# The amount of time in seconds that no swap is allowed to occur.
+# The first swap will be scheduled after this time so assuming default settings the first swap would happen after 8 - 12 minutes.
+# Default: 300
+gracePeriod: 300
+
+# Should Participating Players be able to attack each other? This has no effect on players not involved in the Deathswap.
+# Default: false
+allowPvp: false
+
+# Should travel to the Nether be completely disabled?
+# You may want to disable this as if a Player reaches the Nether very quickly it's effectively a Checkmate as there's very few ways to survive.
+# Par Exemple: https://youtu.be/vXS1pXWslxs?t=937
+# Default: false
+allowNether: false

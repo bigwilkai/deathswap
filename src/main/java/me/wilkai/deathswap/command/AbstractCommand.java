@@ -1,10 +1,8 @@
-package com.wilkei.deathswap.command;
+package me.wilkai.deathswap.command;
 
-import com.wilkei.deathswap.Deathswap;
+import me.wilkai.deathswap.DeathswapPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,37 +16,38 @@ public abstract class AbstractCommand {
      * The Instance of the Deathswap Plugin.
      * Used for getting other variables such as the Settings or Command Handler.
      */
-    @NotNull
-    public final Deathswap deathswap;
+    public final DeathswapPlugin plugin;
 
     /**
      * The name of this command, this is added onto the end of the plugin command to form the actual command.
      * In the form: /deathswap + [name]
      * As an example: /deathswap config
      */
-    @NotNull // A command can't exist without a name because that's not how that works.
     public final String name;
 
     /**
      * The Summary / Description of this command. This is used by the help command to list all commands and describe what they do.
      */
-    @NotNull
     public final String summary;
 
     /**
      * Alternative names that can be used to reference this command.
      * These are added to the plugin command in the exact same way as this command's actual name.
      */
-    @NotNull // A value will be assigned to this automatically if the input value is null.
     public final List<String> aliases;
+
+    /**
+     * Whether or not usage of this command requires Op.
+     */
+    public final boolean requiresOp;
 
     /**
      * Creates a new instance of the Abstract Command class with a give name and set of aliases.
      * @param name The name of this command, Must not be null or empty.
      * @param aliases The aliases of this command, (Optional).
      */
-    public AbstractCommand(@NotNull Deathswap deathswap, @NotNull String name, @NotNull String summary, @Nullable List<String> aliases) {
-        this.deathswap = deathswap;
+    public AbstractCommand(String name, String summary, List<String> aliases, boolean requiresOp) {
+        this.plugin = DeathswapPlugin.getInstance();
         this.name = name;
         this.summary = summary;
 
@@ -58,6 +57,8 @@ public abstract class AbstractCommand {
         else {
             this.aliases = aliases;
         }
+
+        this.requiresOp = requiresOp;
     }
 
     /**
@@ -81,7 +82,9 @@ public abstract class AbstractCommand {
      * @param args The arguments provided to this specific command, works the same as with the execute() method.
      * @return The list of autocomplete options to display to the user.
      */
-    public abstract List<String> complete(CommandSender sender, Command command, String alias, String[] args);
+    public List<String> complete(CommandSender sender, Command command, String alias, String[] args) {
+        return null;
+    }
 
     /**
      * Checks if a specific string matches this command.

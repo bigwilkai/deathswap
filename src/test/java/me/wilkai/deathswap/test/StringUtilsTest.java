@@ -1,12 +1,10 @@
-package com.wilkei.deathswap.test;
+package me.wilkai.deathswap.test;
 
-import com.wilkei.deathswap.util.StringUtils;
+import me.wilkai.deathswap.util.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 public class StringUtilsTest {
 

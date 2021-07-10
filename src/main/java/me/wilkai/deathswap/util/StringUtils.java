@@ -1,6 +1,4 @@
-package com.wilkei.deathswap.util;
-
-import org.jetbrains.annotations.NotNull;
+package me.wilkai.deathswap.util;
 
 import java.util.Locale;
 
@@ -17,7 +15,7 @@ public class StringUtils {
      * @param target The String to compare it to.
      * @return The amount of edits required to make String 1 equal String 2.
      */
-    public static int stringDistance(@NotNull String source, @NotNull String target) { // Adapted from a Rosetta Code example (https://rosettacode.org/wiki/Levenshtein_distance#Java)
+    public static int stringDistance(String source, String target) { // Adapted from a Rosetta Code example (https://rosettacode.org/wiki/Levenshtein_distance#Java)
         if(source.equals(target)) return 0;
 
         // We don't care about capitalisation because this might make Strings appear far more distant from each other than they should be.
@@ -50,7 +48,7 @@ public class StringUtils {
      * @param comparisons The Strings to match it to.
      * @return The closest matching String.
      */
-    public static String closestMatch(@NotNull String string, @NotNull String[] comparisons) {
+    public static String closestMatch(String string, String[] comparisons) {
         String closestString = comparisons[0];
         int closestDistance = stringDistance(string, closestString);
 

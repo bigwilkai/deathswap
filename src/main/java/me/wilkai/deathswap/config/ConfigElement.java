@@ -1,4 +1,4 @@
-package com.wilkei.deathswap.config;
+package me.wilkai.deathswap.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,15 +10,27 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigInt {
+public @interface ConfigElement {
+
+    /**
+     * The actual Name of this Element.
+     */
+    String name();
+
+    /**
+     * A description of what this Config Element is.
+     */
+    String summary();
 
     /**
      * The lowest value that this variable can have.
+     * <b>Only works on Integers!</b>
      */
-    int min() default 10;
+    int min() default -1;
 
     /**
      * The highest value that this variable can have.
+     * <b>Only works on Integers!</b>
      */
-    int max() default 100;
+    int max() default -1;
 }

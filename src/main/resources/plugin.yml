@@ -1,8 +1,11 @@
 name: Deathswap
 version: ${project.version}
-main: com.wilkei.deathswap.Deathswap
+main: DeathswapPlugin
 api-version: 1.17
-authors: [ Wilkei ]
+authors: [ Wilkai ]
 commands:
   deathswap:
     usage: §cInvalid Command Usage! Please use §e/deathswap help§c for a list of Commands.
+    aliases:
+      - ds
+    description: Command used for controlling all aspects of Deathswap.
