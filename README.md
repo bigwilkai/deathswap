@@ -1,6 +1,8 @@
 # Minecraft Deathswap
 A high quality take on the Deathswap minigame with a large amount of pretty cool features!  
 
+![deathswap-1](https://user-images.githubusercontent.com/78887935/125244693-86b0f980-e2e7-11eb-997d-1253d76c4ac6.png)  
+
 ## Concept
 The Objective of Deathswap is to kill all other Players, the catch is though that you can't actually attack them.  
 Instead after a certain amount of time you will be swapped and must kill the other Players by swapping them into a deadly situation.  
