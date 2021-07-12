@@ -1,0 +1,64 @@
+# Yo what's up big man?
+
+# The variables in this file control what the Plugin will say when a given event occurs!
+# Feel free to change them if you want it to say something Funny, Cool or Normal
+
+# For a list of Color Codes check out https://minecraft.fandom.com/wiki/Formatting_codes
+
+# This is Displayed if a Player tries to light a Portal and Visiting Nether is not allowed.
+# Note: This will only show if the Player uses Flint & Steel or a Fire Charge to light the Portal,
+#  if they light it using Burning Wood or something the Plugin will not be able to tell who tried to light it.
+#  the portal still won't light though, the message just can't be sent.
+portalLightDenied: "§7§oGod whispers to you: Sorry buddy but we can't have any of that funny portal business around here."
+
+# Displayed to all Players if a Player leaves the Server that is involved in the Deathswap.
+# <player> will be replaced with the Player's Display Name.
+playerLeaveServer: "§c<player> was removed from the Deathswap as they left the server."
+
+# Displayed when the Deathswap begins.
+deathswapBegin: "§a§lThe Deathswap has begun!"
+
+# Displayed every time the Grace Period countdown hits a minute mark.
+# Note: This will not be called when there is 1 minute left, that is handled by gracePeriodFinalWarning.
+# The variable <minutes> will be replaced with the amount of minutes remaining automatically.
+gracePeriodWarning: "§a<minutes> Minutes until Grace Period ends."
+
+# Displayed when exactly 60 Seconds remain.
+# This is a different variable because minute in this context shouldn't be plural.
+gracePeriodFinalWarning: "§a1 Minute until Grace Period ends."
+
+# Displayed for the final 5 seconds of the Grace Period.
+gracePeriodCountdown: "§eGrace Period ends in <seconds>"
+
+# Displayed when the Grace Period ends.
+gracePeriodEnd: "§cGrace Period is over!"
+
+# Displayed when there are 10 or less seconds until the next swap.
+# <seconds> will be replaced by the exact amount of seconds remaining.
+swappingSoon: "§cSwapping in <seconds>."
+
+# Displayed when the Countdown hits 0.
+swappingNow: "§aSwapping!"
+
+# If both final Players die at the same time somehow this will be displayed in large text in the center of each Player's Game.
+deathswapTieTitle: "§cTie!"
+
+# Same as above but displayed slightly lower down in slightly smaller text.
+deathswapTieSubtitle: "§6Nobody Won :("
+
+# Displayed when only 1 Player remains.
+# Note: This message will not be displayed to the Winner, deathswapVictoryTitle is instead.
+# <winner> will be replaced with the Display Name of the Player.
+deathswapDefeatTitle: "§6<winner>§e wins!"
+
+# Also Displayed when only 1 Player remains, just smaller and lower down.
+deathswapDefeatSubtitle: "§eSucks to be you lmao."
+
+# Displayed to the Winner of the Deathswap.
+deathswapVictoryTitle: "You §e won!"
+
+# Also displayed to the Winner of the Deathswap.
+deathswapVictorySubtitle: "§eGood Job! :)"
+
+# Displayed to all Players if the Deathswap is cancelled using /deathswap cancel
+deathswapCancelled: "§cDeathswap has been cancelled! :("

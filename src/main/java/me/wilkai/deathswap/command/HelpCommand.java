@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class HelpCommand extends AbstractCommand {
 
     public HelpCommand() {
-        super("help", "Displays a list of deathswap commands and what they do.", null, false);
+        super("help", "Displays a List of Commands and what they do.", null, false);
     }
 
     @Override

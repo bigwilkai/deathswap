@@ -21,11 +21,12 @@ public class CommandHandler implements TabExecutor {
      */
     private final ArrayList<AbstractCommand> commands;
 
-    private final DeathswapPlugin plugin;
-
+    /**
+     * Creates a new Instance of the Command Handler Class.
+     */
     public CommandHandler() {
         this.commands = new ArrayList<>();
-        this.plugin = DeathswapPlugin.getInstance();
+        DeathswapPlugin plugin = DeathswapPlugin.getInstance();
 
         PluginCommand command = plugin.getCommand("deathswap");
 
@@ -71,15 +72,11 @@ public class CommandHandler implements TabExecutor {
                 String message = "§cNot sure what you meant by " + args[0] + "\n"
                                + "Did you mean §e/deathswap " + closestMatch + "?";
 
-                // TODO: Allow the player to click on the "did you mean" message to execute the closest matching command.
-
                 sender.sendMessage(message); // Inform the user that we couldn't find a matching command an suggest the closest known command.
             }
             else { // If the Closest Match is nothing like the Issued Command.
                 String message = "§cNot sure what you mean by " + args[0] + "\n"
                                + "Type §e/deathswap help§c for a list of commands.";
-
-                // TODO: Allow the player to click on "/deathswap help" to instantly execute the help command.
 
                 sender.sendMessage(message); // Inform the Sender that we have no idea what they want.
             }

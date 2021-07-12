@@ -1,6 +1,5 @@
 package me.wilkai.deathswap;
 
-import me.wilkai.deathswap.listener.ListenerAll;
 import me.wilkai.deathswap.util.ConfigUtils;
 import me.wilkai.deathswap.command.*;
 import org.bukkit.Bukkit;
@@ -28,17 +27,17 @@ public final class DeathswapPlugin extends JavaPlugin {
         // Move the config.yml file to the Plugin's Data Folder.
         // This will not overwrite the file if it already exists.
         this.saveDefaultConfig();
+        this.saveResource("messages.yml", false);
 
         this.deathswap = new Deathswap(this, ConfigUtils.readConfig());
         this.handler = new CommandHandler();
         handler.register(new HelpCommand());
         handler.register(new StartCommand());
-        handler.register(new AboutCommand());
         handler.register(new CancelCommand());
         handler.register(new ConfigCommand());
         handler.register(new PlayersCommand());
 
-        Bukkit.getPluginManager().registerEvents(new ListenerAll(this), this);
+        Bukkit.getPluginManager().registerEvents(new EventListener(this), this);
     }
 
     @Override

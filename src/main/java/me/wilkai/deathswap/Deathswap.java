@@ -2,6 +2,9 @@ package me.wilkai.deathswap;
 
 import me.wilkai.deathswap.config.Config;
 import org.bukkit.*;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -18,41 +21,17 @@ import java.util.Random;
  */
 public class Deathswap {
 
-    private final Random random;
-    private final DeathswapPlugin plugin;
-    private final ArrayList<Player> players;
-
-    /**
-     * The config settings of the deathswap, controls the game's behaviour.
-     * Called settings because methods such has "getConfig" are contained in the Superclasses.
-     */
-    private Config config;
-
-    /**
-     * This task is executed every 20 Ticks (1 Second) and counts down to the next swap.
-     */
-    private BukkitTask swapTask;
-
-    /**
-     * Is the Deathswap ongoing?
-     */
-    private boolean started;
-
-    /**
-     * Time in seconds until the Grace Period ends.
-     */
-    private int gracePeriodRemaining;
-
-    /**
-     * The time in seconds until the next swap.
-     */
-    private int timeRemaining;
-
-    /**
-     * If True when swapping Player[n] will be teleported to Player[n + 1]
-     * If False when swapping Player[n] will be teleported to Player[n - 1]
-     */
-    private boolean swapNext;
+    private final Random random; // RNG mostly used for Coordinating the next Swap Interval.
+    private final DeathswapPlugin plugin; // The Instance of the Deathswap Plugin.
+    private final ArrayList<Player> players; // The list of all Living Players.
+    private Config config; // The Configuration that Dictates how the Game should Behave.
+    private BukkitTask swapTask; // Task that is executed every second, counts down to the end of the Grace Period and the occurrence of the Next Swap.
+    private BossBar timer; // Timer at the top of the Players screen displaying time until next swap. (And time until Grace Period ends)
+    private boolean started; // Has the Deathswap Started?
+    private int gracePeriodRemaining; // How many seconds remain of the Grace Period.
+    private int swapTime; // The time between the last swap and the next swap.
+    private int timeRemaining; // The Time Remaining until the Next Swap. (In Seconds)
+    private boolean swapPlayersForward; // If true when Swapping, Player[n] will be teleported to Player[n + 1] otherwise they will be teleported to Player[n - 1]
 
     /**
      * Creates a New Instance of the Deathswap Class with the Plugin and Config provided.
@@ -66,12 +45,34 @@ public class Deathswap {
     }
 
     /**
-     * Starts the Deathswap.
+     * Starts the Deathswap!
+     * <i>Does not verify that all conditions are good, this should be handled by the respective command.</i>
      */
     public void start() {
         this.started = true;
         this.gracePeriodRemaining = config.gracePeriod;
         this.scheduleNextSwap();
+
+        Bukkit.broadcastMessage(config.deathswapBegin);
+
+        timer = Bukkit.createBossBar(NamespacedKey.minecraft("deathswap.timer"), "Grace Period", BarColor.GREEN, BarStyle.SOLID);
+
+        if(gracePeriodRemaining != 0) {
+            int minutes = gracePeriodRemaining / 60;
+
+            Bukkit.broadcastMessage(config.gracePeriodWarning.replace("<minutes>", String.valueOf(minutes)));
+        }
+        else { // No Grace Period - Change the Timer to display time till next Swap.
+            timer.setColor(BarColor.RED);
+            timer.setProgress(0);
+            timer.setTitle("Next Swap");
+        }
+
+        if(config.showTimer) {
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                timer.addPlayer(player);
+            });
+        }
 
         this.swapTask = new BukkitRunnable() {
             @Override
@@ -79,25 +80,31 @@ public class Deathswap {
                 if(gracePeriodRemaining > 0) {
                     gracePeriodRemaining--;
 
+                    timer.setProgress((double)(gracePeriodRemaining / config.gracePeriod));
+
                     if(gracePeriodRemaining % 60 == 0) {
                         String message; // Message that is sent to everyone.
                         int minutesLeft = gracePeriodRemaining / 60;
 
                         if(minutesLeft == 0) {
-                            message = "§cGrace Period is over!";
+                            message = config.gracePeriodEnd;
+
+                            timer.setColor(BarColor.RED);
+                            timer.setProgress(0);
+                            timer.setTitle("Next Swap");
                         }
                         else if(minutesLeft == 1) {
-                            message = "§a1 Minute until Grace Period ends.";
+                            message = config.gracePeriodFinalWarning;
                         }
                         else {
-                            message = "§a" + minutesLeft + " Minutes until Grace Period ends.";
+                            message = config.gracePeriodWarning.replace("<minutes>", String.valueOf(minutesLeft));
                         }
 
                         Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(message));
                     }
 
                     if(gracePeriodRemaining <= 5 && gracePeriodRemaining != 0) {
-                        String message = String.format("§eGrace Period ends in %d", gracePeriodRemaining);
+                        String message = config.gracePeriodCountdown.replace("<seconds>", String.valueOf(gracePeriodRemaining));
 
                         Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(message));
                     }
@@ -106,28 +113,21 @@ public class Deathswap {
                 }
 
                 timeRemaining--;
+                timer.setProgress(100.0d - (double)(timeRemaining / swapTime) * 100);
 
-                if(timeRemaining <= config.beginCountdownTime && timeRemaining != 0) { // If it isn't time to swap yet but it will be soon.
-                    String message = String.format("§cSwapping in %d.", timeRemaining);
+                if(timeRemaining <= 10 && timeRemaining != 0) { // If it isn't time to swap yet but it will be soon.
+                    String message = config.swappingSoon.replace("<seconds>", String.valueOf(timeRemaining));
 
-                    if(config.countdownWithTitles) {
-                        players.forEach(player -> player.sendTitle("§c" + timeRemaining, "", 0, 25, 0));
-                    }
-                    else if(config.playSounds) {
-                        players.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1.0f, 1.0f));
-                    }
+                    players.forEach(player -> player.sendTitle("§c" + timeRemaining, "", 0, 25, 0));
+                    players.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1.0f, 1.0f));
 
                     Bukkit.broadcastMessage(message);
                 }
                 else if(timeRemaining == 0) { // If it's time to swap
-                    String message = "§aSwapping!";
+                    String message = config.swappingNow;
 
-                    if(config.countdownWithTitles) {
-                        players.forEach(player -> player.sendTitle("§aSwap!", "", 0, 20, 10));
-                    }
-                    else if(config.playSounds) {
-                        players.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f));
-                    }
+                    players.forEach(player -> player.sendTitle("§aSwap!", "", 0, 20, 10));
+                    players.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f));
 
                     Bukkit.broadcastMessage(message);
                     scheduleNextSwap(); // Schedule the Next Swap before executing the Current One in order to avoid timing issues.
@@ -139,13 +139,17 @@ public class Deathswap {
     }
 
     /**
-     * Stops the Deathswap.
+     * Stops the Deathswap as long as there are less than 2 people alive.
+     * If there is 1 Player alive they are declared the Winner.
+     * If there are no Players alive the Plugin will check which two Players died last and declare a tie between them.
+     *
+     * @see Deathswap#cancel() To cancel the Deathswap with no winners.
      */
     public void stop() {
         if(players.size() == 0) { // Tie!
-            String message = "§cTie!";
+            String message = config.deathswapTieTitle;
             Bukkit.getOnlinePlayers().forEach(player -> {
-                player.sendTitle(message, "§6Nobody Won :(", 40, 100, 10);
+                player.sendTitle(message, config.deathswapTieSubtitle, 40, 100, 10);
             });
 
             this.started = false;
@@ -157,18 +161,19 @@ public class Deathswap {
         }
         else {
             this.started = false;
-            this.swapTask.cancel();
+            this.swapTask.cancel(); // Prevent another Swap from occurring.
 
             Player winner = players.get(0); // Get the Winner.
-            String message = ChatColor.GOLD + winner.getName() + ChatColor.YELLOW + "wins!";
+            String message = config.deathswapDefeatTitle.replace("<winner>", winner.getDisplayName());
 
+            // Loop through all online Players.
             Bukkit.getOnlinePlayers().forEach(player -> {
-                if(player != winner) {
-                    player.teleport(winner.getLocation());
-                    player.sendTitle(message, "§eSucks to be you lmao.", 60, 120, 30);
+                if(player != winner) { // If this Player lost.
+                    player.teleport(winner.getLocation()); // Teleport the Player to the Winner's Location.
+                    player.sendTitle(message, config.deathswapDefeatSubtitle, 60, 120, 30); // Send the Player a nice friendly message.
                 }
-                else {
-                    player.sendTitle(ChatColor.GOLD + "You " + ChatColor.YELLOW + " won!", "§eGood Job! :)", 70, 130, 40);
+                else { // If this Player won!
+                    player.sendTitle(config.deathswapVictoryTitle, config.deathswapVictorySubtitle, 70, 130, 40);
                 }
             });
 
@@ -182,7 +187,7 @@ public class Deathswap {
                 double z = location.getZ() + random.nextInt(3) - 1;
 
                 Color color = Color.fromRGB((int)(random.nextDouble() * 0x1000000)); // Generate a Random Color.
-                FireworkEffect.Type type = FireworkEffect.Type.values()[random.nextInt(5)];
+                FireworkEffect.Type type = FireworkEffect.Type.values()[random.nextInt(5)]; // Pick a Random Firework Effect.
 
                 // Generate a random Firework Effect.
                 FireworkEffect effect = FireworkEffect.builder()
@@ -192,8 +197,10 @@ public class Deathswap {
                         .with(type)
                         .build();
 
+                // Determine the Location the Firework will be Spawned at.
                 Location spawnLocation = new Location(world, x, location.getY(), z);
 
+                // Spawn the Firework with the given effects.
                 Firework firework = world.spawn(spawnLocation, Firework.class);
                 FireworkMeta meta = firework.getFireworkMeta();
                 meta.addEffect(effect);
@@ -201,19 +208,29 @@ public class Deathswap {
             }
         }
 
-        Bukkit.getOnlinePlayers().forEach(player -> player.setGameMode(GameMode.SURVIVAL));
+        timer.setVisible(false); // Make the timer invisible.
     }
 
+    /**
+     * Cancels the Deathswap with no winners.
+     * This will never be triggered automatically and can only be triggered by Commands.
+     *
+     * @see Deathswap#stop() To stop the Deathswap normally and let someone winner.
+     */
     public void cancel() {
         this.started = false;
         this.swapTask.cancel();
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.sendMessage("§cDeathswap has been cancelled! :(");
+            player.sendMessage(config.deathswapCancelled);
         });
 
+        timer.setVisible(false);
     }
 
+    /**
+     * Swaps all Players in the List.
+     */
     private void swap() {
         /* Comment left from 7th July 2021 -
         // What do we do here?! //
@@ -234,54 +251,47 @@ public class Deathswap {
         // help
         */
 
-        if(players.size() == 2) {
-            Location player1Origin = players.get(0).getLocation();
-            Player player1 = players.get(0);
-            Player player2 = players.get(1);
+        if (swapPlayersForward) {
+            // Where the First Player was prior to Teleporting. (Used to teleport the last Player)
+            Location player1Start = players.get(0).getLocation();
 
-            player1.teleport(player2.getLocation());
-            player2.teleport(player1Origin);
-        }
-        else {
-            if(swapNext) {
-                // Where the First Player was prior to Teleporting. (Used to teleport the last Player)
-                Location player1Start = players.get(0).getLocation();
+            // I want to merge these 2 statements but they are just too different :(
 
-                for(int i = 0; i < players.size(); i++) {
-                    Player player = players.get(i);
+            for (int i = 0; i < players.size(); i++) {
+                Player player = players.get(i);
 
-                    if(i == players.size() - 1) {
-                        player.teleport(player1Start);
-                    }
-                    else {
-                        Player swapTarget = players.get(i + 1);
-                        player.teleport(swapTarget.getLocation());
-                    }
+                if (i == players.size() - 1) {
+                    player.teleport(player1Start);
+                } else {
+                    Player swapTarget = players.get(i + 1);
+                    player.teleport(swapTarget.getLocation());
                 }
             }
-            else {
-                // Where the First Player was prior to Teleporting. (Used to teleport the last Player)
-                Location finalPlayerDestination = players.get(players.size() - 1).getLocation();
+        } else {
+            // Where the First Player was prior to Teleporting. (Used to teleport the last Player)
+            Location finalPlayerDestination = players.get(players.size() - 1).getLocation();
 
-                for(int i = players.size() - 1; i > -1; i--) {
-                    Player player = players.get(i);
+            for (int i = players.size() - 1; i > -1; i--) {
+                Player player = players.get(i);
 
-                    if(i == 0) {
-                        player.teleport(finalPlayerDestination);
-                    }
-                    else {
-                        Player swapTarget = players.get(i - 1);
-                        player.teleport(swapTarget.getLocation());
-                    }
+                if (i == 0) {
+                    player.teleport(finalPlayerDestination);
+                } else {
+                    Player swapTarget = players.get(i - 1);
+                    player.teleport(swapTarget.getLocation());
                 }
             }
         }
 
-        swapNext = !swapNext;
+        // Swap the Players in the opposite direction next time.
+        swapPlayersForward = !swapPlayersForward;
     }
 
     /**
      * Schedules the next swap using the settings specified in the Config.
+     *
+     * @see Deathswap#swapTime For the Amount of Time in Seconds this round will last.
+     * @see Deathswap#timeRemaining For the Amount of Time in Seconds that remains to the next Nwap.
      */
     private void scheduleNextSwap() {
         if(config.swapIntervalVariation != 0) {
@@ -294,11 +304,12 @@ public class Deathswap {
             // we will then subtract 120 from this random number getting some number between -120 and 120.
             // Finally we add this number to the swap interval.
             // If the Swap Interval was set to 300 Seconds or 5 Minutes this would mean that the next swap will occur in anywhere between 3 and 7 Minutes.
-            timeRemaining = interval + random.nextInt(variation * 2 + 1) - variation;
+            swapTime = interval + random.nextInt(variation * 2 + 1) - variation;
+            timeRemaining = swapTime;
         }
         else {
             // If the Swap Interval Variation is disabled just set it to the Swap Interval.
-            timeRemaining = config.swapInterval;
+            swapTime = config.swapInterval;
         }
     }
 
@@ -310,10 +321,19 @@ public class Deathswap {
         return this.started;
     }
 
+    /**
+     * Gets the Deathswap's Config Settings.
+     * @return The Deathswap's Config.
+     */
     public Config getConfig() {
         return this.config;
     }
 
+    /**
+     * Sets the entire Deathswap Config.
+     * Almost exclusively used by the "/deathswap config reset all" command.
+     * @param config The Config to set it to.
+     */
     public void setConfig(Config config) {
         this.config = config;
     }

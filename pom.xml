@@ -6,7 +6,7 @@
 
     <groupId>me.wilkai</groupId>
     <artifactId>Deathswap</artifactId>
-    <version>0.40_u</version>
+    <version>0.41_u</version>
     <packaging>jar</packaging>
 
     <name>Deathswap</name>

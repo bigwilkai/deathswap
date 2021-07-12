@@ -11,7 +11,7 @@ import java.util.List;
 public class PlayersCommand extends AbstractCommand {
 
     public PlayersCommand() {
-        super("players", "Add, Remove or List Players", null, true);
+        super("players", "Add, Remove and List Players in the Deathswap.", null, true);
     }
 
     public void execute(CommandSender sender, Command command, String label, String[] args) {

@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 public class StartCommand extends AbstractCommand {
 
     public StartCommand() {
-        super("start", "Starts the Deathswap!", null, true);
+        super("start", "command.start.summary", null, true);
     }
 
     public void execute(CommandSender sender, Command command, String label, String[] args) {

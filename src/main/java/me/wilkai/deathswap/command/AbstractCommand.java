@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents an abstract command which all Deathswap commands must inherit.
@@ -44,20 +45,16 @@ public abstract class AbstractCommand {
     /**
      * Creates a new instance of the Abstract Command class with a give name and set of aliases.
      * @param name The name of this command, Must not be null or empty.
+     * @param summary A short description of what this Command does.
      * @param aliases The aliases of this command, (Optional).
+     * @param requiresOp Does this command require the Operator Permission?
      */
     public AbstractCommand(String name, String summary, List<String> aliases, boolean requiresOp) {
         this.plugin = DeathswapPlugin.getInstance();
         this.name = name;
         this.summary = summary;
-
-        if(aliases == null) { // Makes sure that the Command Handler doesn't accidentally throw a Null Pointer Exception whilst checking through aliases.
-            this.aliases = new ArrayList<>();
-        }
-        else {
-            this.aliases = aliases;
-        }
-
+        // Makes sure that the Command Handler doesn't accidentally throw a Null Pointer Exception whilst checking through aliases.
+        this.aliases = Objects.requireNonNullElseGet(aliases, ArrayList::new);
         this.requiresOp = requiresOp;
     }
 

@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 public class CancelCommand extends AbstractCommand {
 
     public CancelCommand() {
-        super("cancel", "Outright Cancels an Ongoing Deathswap.", null, true);
+        super("cancel", "Outright cancels the Deathswap.", null, true);
     }
 
     public void execute(CommandSender sender, Command command, String label, String[] args) {

@@ -1,6 +1,6 @@
 name: Deathswap
 version: ${project.version}
-main: DeathswapPlugin
+main: me.wilkai.deathswap.DeathswapPlugin
 api-version: 1.17
 authors: [ Wilkai ]
 commands:

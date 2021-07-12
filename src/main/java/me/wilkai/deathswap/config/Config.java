@@ -1,5 +1,7 @@
 package me.wilkai.deathswap.config;
 
+import me.wilkai.deathswap.DeathswapPlugin;
+
 /**
  * Configuration which contains rules for how the Plugin should behave.
  */
@@ -20,11 +22,8 @@ public class Config {
     @ConfigElement(name = "Grace Period", summary = "Time in which no swap will happen.", min = 0, max = 40000000)
     public int gracePeriod = 300;
 
-    @ConfigElement(name = "Begin Countdown Time", summary = "The time at which Deathswap will begin sending a countdown in chat.", min = 0, max = 40000000)
-    public int beginCountdownTime = 10;
-
-    @ConfigElement(name = "Mob Spawning Percentage", summary = "The Percentage of Hostile Mobs that will spawn.", min = 0, max = 100)
-    public int mobSpawningPercentage = 100;
+    @ConfigElement(name = "Mob Spawn Rate", summary = "The Percentage of Hostile Mobs that will be allowed to spawn.", min = 0, max = 100)
+    public int mobSpawnRate = 100;
 
     /**
      * Should we allow Players to attack each other?
@@ -43,22 +42,30 @@ public class Config {
     @ConfigElement(name = "Allow Nether", summary = "Should Players be allowed to enter the Nether?")
     public boolean allowNether = false;
 
-    /**
-     * If true and Pvp is Disabled then we will send a message to Players who try and attack others informing them that Pvp is disabled.
-     */
-    @ConfigElement(name = "Announce Pvp Disabled", summary = "If a Player tries to attack another Player we should let them know that Pvp is disabled.")
-    public boolean announcePvpDisabled = false;
+    @ConfigElement(name = "Show Timer", summary = "Displays a Timer at the Top of your screen of how long is left until the Next Swap.")
+    public boolean showTimer = false;
 
-    /**
-     * If true and Portals are Disabled then we will send a message to Players who try to light a Portal informing them that the nether is disabled.
-     */
-    @ConfigElement(name = "Announce Portals Disabled", summary = "If a Player tries to travel to the Nether we should inform them that it is disabled.")
-    public boolean announcePortalsDisabled = true;
+    @ConfigElement(name = "Kick Players on Leave", summary = "Kicks Players from the Deathswap if they leave the Server")
+    public boolean kickPlayersOnLeave = true;
 
-    @ConfigElement(name = "Play Sounds", summary = "Plays cool note block sounds during the countdown.")
-    public boolean playSounds = true;
+    public String portalLightDenied = "§7§oGod whispers to you: Sorry buddy but we can't have any of that funny portal business around here.";
+    public String playerLeaveServer = "§c<player> was removed from the Deathswap as they left the server.";
+    public String deathswapBegin = "§a§lThe Deathswap has begun!";
+    public String gracePeriodWarning = "§a<minutes> Minutes until Grace Period ends.";
+    public String gracePeriodFinalWarning = "§a1 Minute until Grace Period ends.";
+    public String gracePeriodCountdown = "§eGrace Period ends in <seconds>";
+    public String gracePeriodEnd = "§cGrace Period is over!";
+    public String swappingSoon = "§cSwapping in <seconds>.";
+    public String swappingNow = "§aSwapping!";
+    public String deathswapTieTitle = "§cTie!";
+    public String deathswapTieSubtitle = "§6Nobody Won :(";
+    public String deathswapDefeatTitle = "§6<winner>§e wins!";
+    public String deathswapDefeatSubtitle = "§eSucks to be you lmao.";
+    public String deathswapVictoryTitle = "You §e won!";
+    public String deathswapVictorySubtitle = "§eGood Job! :)";
+    public String deathswapCancelled = "§cDeathswap has been cancelled! :(";
 
-    @ConfigElement(name = "Countdown With Titles", summary = "Displays the Countdown in large text in the center of each Player's screen.")
-    public boolean countdownWithTitles = true;
-
+    public static Config getInstance() {
+        return DeathswapPlugin.getInstance().getDeathswap().getConfig();
+    }
 }

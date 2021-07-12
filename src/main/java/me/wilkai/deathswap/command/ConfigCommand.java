@@ -10,13 +10,16 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command Used for Easily Changing Config Settings.
+ * Uses a fuckton of Reflection because I though it would be a great idea.
+ */
 public class ConfigCommand extends AbstractCommand {
 
     public ConfigCommand() {
         super("config", "Gets and Sets config settings.", null, true);
     }
 
-    @Override
     public void execute(CommandSender sender, Command command, String label, String[] args) {
         if(args.length > 0) {
             if(args[0].equals("help")) { // If the user typed /deathswap config help.
@@ -29,11 +32,11 @@ public class ConfigCommand extends AbstractCommand {
 
                     if(element != null) { // Every field in the Config class has to contain a summary so we need to get that.
                         // Example: (Aqua) swapInterval - (Italic) The duration between swaps. (Reset)
-                        builder.append(" §b");
+                        builder.append(" ");
                         builder.append(field.getName());
-                        builder.append(" - §o");
+                        builder.append(" - §7");
                         builder.append(element.summary());
-                        builder.append("§r\n");
+                        builder.append("§r\n\n");
                     }
                 }
 
@@ -58,8 +61,7 @@ public class ConfigCommand extends AbstractCommand {
                         ConfigElement element = field.getAnnotation(ConfigElement.class);
 
                         if(element == null) {
-                            sender.sendMessage("§c Internal Error! " + field.getName() + " is not marked as a Config Element when it should be.");
-                            return;
+                            throw new NoSuchFieldException("");
                         }
 
                         if(args[0].equals("get")) {
@@ -232,6 +234,9 @@ public class ConfigCommand extends AbstractCommand {
                         List<String> settings = new ArrayList<>();
 
                         for(Field field : Config.class.getFields()) {
+                            if(field.getAnnotation(ConfigElement.class) == null) {
+                                continue;
+                            }
                             settings.add(field.getName());
                         }
 
@@ -265,7 +270,6 @@ public class ConfigCommand extends AbstractCommand {
         }
     }
 
-    @Override
     public List<String> complete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> autocomp = new ArrayList<>();
 
@@ -284,6 +288,9 @@ public class ConfigCommand extends AbstractCommand {
                     Field[] fields = Config.class.getFields();
 
                     for(Field field : fields) {
+                        if(field.getAnnotation(ConfigElement.class) == null) {
+                            continue;
+                        }
                         autocomp.add(field.getName());
                     }
             }

@@ -3,15 +3,17 @@
 swapInterval: 300
 
 # The amount of time that the swap interval can vary +/- in seconds. (Default is 120 seconds (2 minutes) This means that default swap time is between 3 and 7 minutes.
+# If you don't want the interval to vary set this to 0.
 # Default: 120
 swapIntervalVariation: 120
 
 # The amount of time in seconds that no swap is allowed to occur.
 # The first swap will be scheduled after this time so assuming default settings the first swap would happen after 8 - 12 minutes.
+# If you don't want a Grace Period set this to 0.
 # Default: 300
 gracePeriod: 300
 
-# Should Participating Players be able to attack each other? This has no effect on players not involved in the Deathswap.
+# Should Participating Players be able to attack each other?
 # Default: false
 allowPvp: false
 
@@ -20,3 +22,13 @@ allowPvp: false
 # Par Exemple: https://youtu.be/vXS1pXWslxs?t=937
 # Default: false
 allowNether: false
+
+# The amount of Hostile mobs which will be allowed to spawn.
+# This allows you to limit the amount of threats from Mobs so that deaths are a result
+# of other Players.
+# 100% - All mobs will spawn as usual.
+# 50% - Only half as many Mobs.
+# 0% - Mobs will not spawn.
+# etc.
+# Default: 100
+mobSpawnRate: 100
