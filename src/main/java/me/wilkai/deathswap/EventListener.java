@@ -128,6 +128,10 @@ public class EventListener implements Listener {
             if(deathswap.getConfig().kickPlayersOnLeave && deathswap.getPlayers().contains(player)) {
                 Bukkit.broadcastMessage(deathswap.getConfig().playerLeaveServer.replace("<player>", player.getDisplayName()));
                 deathswap.getPlayers().remove(player);
+
+                if(deathswap.getPlayers().size() < 2) {
+                    deathswap.stop();
+                }
             }
         }
     }

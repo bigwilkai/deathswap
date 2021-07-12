@@ -81,6 +81,10 @@ public class PlayersCommand extends AbstractCommand {
                         b.append(player.getName());
                         b.append(" from Players.\n");
 
+                        if(players.size() < 2) {
+                            plugin.getDeathswap().stop();
+                        }
+
                         if(players.size() == 1) {
                             b.append("There is now 1 Player.");
                         }
