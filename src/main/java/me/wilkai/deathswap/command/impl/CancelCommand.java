@@ -1,20 +1,23 @@
-package me.wilkai.deathswap.command;
+package me.wilkai.deathswap.command.impl;
 
 import me.wilkai.deathswap.Deathswap;
+import me.wilkai.deathswap.command.AbstractCommand;
+import me.wilkai.deathswap.command.CommandInfo;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class CancelCommand extends AbstractCommand {
 
     public CancelCommand() {
-        super("cancel", "Outright cancels the Deathswap.", null, true);
+        super(new CommandInfo("cancel")
+                .setSummary("Outright cancels the Deathswap."));
     }
 
-    public void execute(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
         Deathswap deathswap = plugin.getDeathswap();
 
         if(!deathswap.hasStarted()) {
-            sender.sendMessage("§Can't cancel Deathswap as it has not started.");
+            sender.sendMessage("§cCan't cancel Deathswap as it has not started.");
         }
         else {
             sender.sendMessage("§aCancelling Deathswap...");

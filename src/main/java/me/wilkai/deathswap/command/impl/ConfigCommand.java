@@ -1,8 +1,14 @@
-package me.wilkai.deathswap.command;
+package me.wilkai.deathswap.command.impl;
 
+import me.wilkai.deathswap.command.AbstractCommand;
+import me.wilkai.deathswap.command.CommandInfo;
 import me.wilkai.deathswap.config.Config;
 import me.wilkai.deathswap.config.ConfigElement;
 import me.wilkai.deathswap.util.StringUtils;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -17,26 +23,33 @@ import java.util.List;
 public class ConfigCommand extends AbstractCommand {
 
     public ConfigCommand() {
-        super("config", "Gets and Sets config settings.", null, true);
+        super(new CommandInfo("config")
+                .addUsage("get <setting>")
+                .addUsage("set <setting> <value>")
+                .addUsage("reset <setting>")
+                .addUsage("help")
+                .setSummary("Gets and Sets config settings."));
     }
 
-    public void execute(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
         if(args.length > 0) {
-            if(args[0].equals("help")) { // If the user typed /deathswap config help.
+            String operation = args[0];
+
+            if(operation.equals("help")) { // If the user typed /deathswap config help.
                 StringBuilder builder = new StringBuilder();
                 builder.append("§e===== Config Help =======\n");
-                builder.append("§6/deathswap config ...\n");
+                builder.append("§6/deathswap config ...§r");
 
                 for(Field field : Config.class.getFields()) {
                     ConfigElement element = field.getAnnotation(ConfigElement.class);
 
                     if(element != null) { // Every field in the Config class has to contain a summary so we need to get that.
                         // Example: (Aqua) swapInterval - (Italic) The duration between swaps. (Reset)
-                        builder.append(" ");
+                        builder.append("\n ");
                         builder.append(field.getName());
                         builder.append(" - §7");
                         builder.append(element.summary());
-                        builder.append("§r\n\n");
+                        builder.append("§r\n");
                     }
                 }
 
@@ -46,12 +59,12 @@ public class ConfigCommand extends AbstractCommand {
             else {
                 if(args.length > 1) {
                     try {
-                        if(!(args[0].equals("get") || args[0].equals("set") || args[0].equals("reset"))) {
+                        if(!(operation.equals("get") || operation.equals("set") || operation.equals("reset"))) {
                             sender.sendMessage("§cUnknown Argument! Valid options are §ehelp§c, §eget§c, §eset§c or §ereset§c.");
                             return;
                         }
 
-                        if(args[0].equals("reset") && args[1].equals("all")) {
+                        if(operation.equals("reset") && args[1].equals("all")) {
                             sender.sendMessage("Reset all Config Settings to Default.");
                             plugin.getDeathswap().setConfig(new Config());
                             return;
@@ -64,51 +77,58 @@ public class ConfigCommand extends AbstractCommand {
                             throw new NoSuchFieldException("");
                         }
 
-                        if(args[0].equals("get")) {
+                        if(operation.equals("get")) {
                             Class<?> type = field.getType();
                             String value = field.get(plugin.getDeathswap().getConfig()).toString();
                             String message = element.name() + " is currently set to ";
 
                             if (value == null) { // If the value is null set the Color to Grey.
                                 message += "§7null";
-                            } else if (type.equals(boolean.class)) { // Color the value Green if it is True, and Red otherwise.
-                                if (value.equals("true")) {
-                                    message += "§a" + value;
-                                } else {
-                                    message += "§c" + value;
-                                }
-                            } else if (type.equals(short.class) || type.equals(int.class) || type.equals(long.class) || type.equals(float.class) || type.equals(double.class)) { // Color the value Aqua.
+                            }
+                            else if (type.equals(boolean.class)) { // Color the value Green if it is True, and Red otherwise.
+                                message += (value.equals("true")) ? "§atrue" : "§cfalse";
+                            }
+                            else if (type.isPrimitive()) { // (Number) Color the value Aqua.
                                 message += "§b" + value;
-                            } else if (type.equals(String.class)) { // Put Quotation marks around the value and color it Yellow.
+                            }
+                            else if (type.equals(String.class)) { // Put Quotation marks around the value and color it Yellow.
                                 message += "\"§e" + value + "\"";
-                            } else {
+                            }
+                            else { // Value is of an unknown type; Color it white.
                                 message += value;
                             }
 
                             message += "§r.";
                             sender.sendMessage(message);
                         }
-                        else if(args[0].equals("set")) {
+                        else if(operation.equals("set")) {
                             Class<?> type = field.getType();
                             String message = "Set " + element.name() + " to ";
 
+                            if(args.length < 3) {
+                                sender.sendMessage("You must specify a config setting!");
+                                return;
+                            }
+
+                            String stringValue = args[2];
+
                             if (type.equals(boolean.class)) {
                                 boolean value;
-                                if (args[2].equalsIgnoreCase("true")) {
+                                if (stringValue.equalsIgnoreCase("true")) {
                                     value = true;
                                     message += "§atrue";
-                                } else if (args[2].equalsIgnoreCase("false")) {
+                                } else if (stringValue.equalsIgnoreCase("false")) {
                                     value = false;
                                     message += "§cfalse";
                                 } else {
-                                    sender.sendMessage("§c" + element.name() + " cannot be set to " + args[2] + " it can only be set to true or false.");
+                                    sender.sendMessage("§c" + element.name() + " cannot be set to " + stringValue + " it can only be set to true or false.");
                                     return;
                                 }
 
                                 field.setBoolean(plugin.getDeathswap().getConfig(), value);
                             } else if (type.equals(float.class) || type.equals(double.class)) {
                                 try {
-                                    double value = Double.parseDouble(args[2]);
+                                    double value = Double.parseDouble(stringValue);
 
                                     if (value > element.max()) {
                                         sender.sendMessage("§c" + element.name() + " cannot be set any higher than " + element.max() + ".");
@@ -121,12 +141,12 @@ public class ConfigCommand extends AbstractCommand {
                                     field.set(plugin.getDeathswap().getConfig(), value);
                                     message += "§b" + value;
                                 } catch (NumberFormatException e) {
-                                    sender.sendMessage("§c" + element.name() + " expects a double but §e" + args[2] + "§c is not a double.");
+                                    sender.sendMessage("§c" + element.name() + " expects a double but §e" + stringValue + "§c is not a double.");
                                     return;
                                 }
                             } else if (type.equals(short.class)) {
                                 try {
-                                    short value = Short.parseShort(args[2]);
+                                    short value = Short.parseShort(stringValue);
 
                                     if (value > element.max()) {
                                         sender.sendMessage("§c" + element.name() + " cannot be set any higher than " + element.max() + ".");
@@ -140,12 +160,12 @@ public class ConfigCommand extends AbstractCommand {
 
                                     field.setShort(plugin.getDeathswap().getConfig(), value);
                                 } catch (NumberFormatException e) {
-                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + args[2] + "§c is not a number.");
+                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + stringValue + "§c is not a number.");
                                     return;
                                 }
                             } else if (type.equals(int.class)) {
                                 try {
-                                    int value = Integer.parseInt(args[2]);
+                                    int value = Integer.parseInt(stringValue);
 
                                     if (value > element.max()) {
                                         sender.sendMessage("§c" + element.name() + " cannot be set any higher than " + element.max() + ".");
@@ -159,12 +179,12 @@ public class ConfigCommand extends AbstractCommand {
 
                                     field.setInt(plugin.getDeathswap().getConfig(), value);
                                 } catch (NumberFormatException e) {
-                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + args[2] + "§c is not a number.");
+                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + stringValue + "§c is not a number.");
                                     return;
                                 }
                             } else if (type.equals(long.class)) {
                                 try {
-                                    long value = Long.parseLong(args[2]);
+                                    long value = Long.parseLong(stringValue);
 
                                     if (value > element.max()) {
                                         sender.sendMessage("§c" + element.name() + " cannot be set any higher than " + element.max() + ".");
@@ -178,13 +198,13 @@ public class ConfigCommand extends AbstractCommand {
 
                                     field.setLong(plugin.getDeathswap().getConfig(), value);
                                 } catch (NumberFormatException e) {
-                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + args[2] + "§c is not a number.");
+                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + stringValue + "§c is not a number.");
                                     return;
                                 }
                             } else { // This is not a catch-all case as it only supports Strings.
                                 try {
-                                    field.set(plugin.getDeathswap().getConfig(), args[2]);
-                                    message += "§e\"" + args[2] + "\"";
+                                    field.set(plugin.getDeathswap().getConfig(), stringValue);
+                                    message += "§e\"" + stringValue + "\"";
                                 } catch (IllegalArgumentException e) {
                                     sender.sendMessage("§c" + type.getTypeName() + " is not supported by Deathswap's Config.");
                                     return;
@@ -243,18 +263,37 @@ public class ConfigCommand extends AbstractCommand {
                         String closestMatch = StringUtils.closestMatch(args[1], settings.toArray(new String[1]));
                         int distance = StringUtils.stringDistance(closestMatch, args[1]);
 
-                        String message;
+                        TextComponent message;
                         if(distance < 5) {
-                            message = "§cDon't know what " + args[1] + " is!\n"
-                                    + "Did you mean §e" + closestMatch + "§c?";
+                            message = new TextComponent("§cDon't know what " + args[1] + " is!\n"
+                                    + "Did you mean ");
 
+                            TextComponent suggestion = new TextComponent("§e" + closestMatch);
+
+                            String expectedCommand = "/deathswap config " + operation + " " + closestMatch;
+
+                            if(args.length > 2) {
+                                expectedCommand += " " + args[2];
+                            }
+
+                            suggestion.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§e" + expectedCommand)));
+                            suggestion.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, expectedCommand));
+
+                            message.addExtra(suggestion);
+                            message.addExtra("§c?");
                         }
                         else {
-                            message = "§cDon't know what " + args[1] + " is!\n"
-                                    + "Type §e/deathswap config help§c for a list of config settings.";
+                            message = new TextComponent("§cDon't know what " + args[1] + " is!\n"
+                                    + "Type ");
 
+                            TextComponent suggestion = new TextComponent("§e/deathswap config help");
+                            suggestion.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to list Config Settings!")));
+                            suggestion.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/deathswap config help"));
+
+                            message.addExtra(suggestion);
+                            message.addExtra(" §cfor a list of config settings.");
                         }
-                        sender.sendMessage(message);
+                        sender.spigot().sendMessage(message);
                     }
                     catch(IllegalAccessException e) {
                         e.printStackTrace();
@@ -266,11 +305,11 @@ public class ConfigCommand extends AbstractCommand {
             }
         }
         else {
-            this.execute(sender, command, label, new String[] {"help"}); // Show the user the list of config settings.
+            this.execute(sender, new String[] {"help"}); // Show the user the list of config settings.
         }
     }
 
-    public List<String> complete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> complete(CommandSender sender, String[] args) {
         List<String> autocomp = new ArrayList<>();
 
         if(args.length == 1) {

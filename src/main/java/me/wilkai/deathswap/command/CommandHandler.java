@@ -1,7 +1,13 @@
-package me.wilkai.deathswap;
+package me.wilkai.deathswap.command;
 
+import me.wilkai.deathswap.DeathswapPlugin;
 import me.wilkai.deathswap.command.AbstractCommand;
 import me.wilkai.deathswap.util.StringUtils;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -47,7 +53,7 @@ public class CommandHandler implements TabExecutor {
                 if(!sender.isOp() && cmd.requiresOp) { continue; }
                 if(cmd.matches(args[0])) { // If a command is found which has a matching name/alias to the command issued by the user.
                     String[] arguments = Arrays.copyOfRange(args, 1, args.length); // Cut out the first argument. (Because it will always be the command's name or an alias.
-                    cmd.execute(sender, command, args[0], arguments); // Execute the command.
+                    cmd.execute(sender, arguments); // Execute the command.
                     return true; // Return true because we found a command with a matching name.
                 }
             }
@@ -69,16 +75,44 @@ public class CommandHandler implements TabExecutor {
             int distance = StringUtils.stringDistance(args[0], closestMatch); // Get the difference between the Closest Match and Issued Command.
 
             if(distance < 5) { // If the Closest Match isn't to far from the Issued Command.
-                String message = "§cNot sure what you meant by " + args[0] + "\n"
-                               + "Did you mean §e/deathswap " + closestMatch + "?";
+                String text = "§cNot sure what you meant by " + args[0] + "\n"
+                               + "Did you mean ";
 
-                sender.sendMessage(message); // Inform the user that we couldn't find a matching command an suggest the closest known command.
+                StringBuilder b = new StringBuilder("/deathswap " + closestMatch);
+
+                for(int i = 1; i < args.length; i++) {
+                    b.append(" ").append(args[i]);
+                }
+
+                // The command we think the player meant, plus the arguments.
+                String rebuiltCommand = b.toString();
+
+                TextComponent message = new TextComponent(text);
+                TextComponent suggestion = new TextComponent("§e/deathswap " + closestMatch);
+                suggestion.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + rebuiltCommand)));
+                suggestion.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, rebuiltCommand));
+                suggestion.setColor(ChatColor.YELLOW);
+
+                message.addExtra(suggestion);
+                message.addExtra("§c?");
+
+                // Bukkit doesn't have support for TextComponents so we use spigot here.
+                sender.spigot().sendMessage(message); // Inform the user that we couldn't find a matching command an suggest the closest known command.
             }
             else { // If the Closest Match is nothing like the Issued Command.
-                String message = "§cNot sure what you mean by " + args[0] + "\n"
-                               + "Type §e/deathswap help§c for a list of commands.";
+                String text = "§cNot sure what you mean by " + args[0] + "\n"
+                               + "Type ";
 
-                sender.sendMessage(message); // Inform the Sender that we have no idea what they want.
+                TextComponent message = new TextComponent(text);
+                TextComponent helpCommand = new TextComponent("§e/deathswap help");
+
+                helpCommand.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + "Click to list commands.")));
+                helpCommand.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/deathswap help"));
+
+                message.addExtra(helpCommand);
+                message.addExtra("§c for a list of commands.");
+
+                sender.spigot().sendMessage(message); // Inform the Sender that we have no idea what they want.
             }
 
             return true; // We've accounted for all incorrect usage cases here, no need to send the usage message.
@@ -86,7 +120,7 @@ public class CommandHandler implements TabExecutor {
         else { // The Player hasn't specified a subcommand, send them the help message to inform them of the commands they can use.
             for(AbstractCommand cmd : commands) {
                 if(cmd.matches("help")) {
-                    cmd.execute(sender, command, label, args);
+                    cmd.execute(sender, args);
                     return true;
                 }
             }
@@ -118,7 +152,7 @@ public class CommandHandler implements TabExecutor {
                 }
 
                 if(cmd.matches(string)) { // If we find a match, get its autocomplete options.
-                    List<String> commandAutocomp = cmd.complete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length));
+                    List<String> commandAutocomp = cmd.complete(sender, Arrays.copyOfRange(args, 1, args.length));
 
                     // Prevents a Null Pointer Exception from being thrown if the command doesn't return any tab completions.
                     if(commandAutocomp != null) {

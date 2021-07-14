@@ -31,6 +31,8 @@ public abstract class AbstractCommand {
      */
     public final String summary;
 
+    public final List<String> usages;
+
     /**
      * Alternative names that can be used to reference this command.
      * These are added to the plugin command in the exact same way as this command's actual name.
@@ -43,16 +45,25 @@ public abstract class AbstractCommand {
     public final boolean requiresOp;
 
     /**
+     * Creates a new instance of the Abstract Command class with arguments packaged as a CommandInfo class.
+     * @param info
+     */
+    public AbstractCommand(CommandInfo info) {
+        this(info.getName(), info.getSummary(), info.getAliases(), info.getUsages(), info.requiresOp());
+    }
+
+    /**
      * Creates a new instance of the Abstract Command class with a give name and set of aliases.
      * @param name The name of this command, Must not be null or empty.
      * @param summary A short description of what this Command does.
      * @param aliases The aliases of this command, (Optional).
      * @param requiresOp Does this command require the Operator Permission?
      */
-    public AbstractCommand(String name, String summary, List<String> aliases, boolean requiresOp) {
+    public AbstractCommand(String name, String summary, List<String> aliases, List<String> usages, boolean requiresOp) {
         this.plugin = DeathswapPlugin.getInstance();
         this.name = name;
         this.summary = summary;
+        this.usages = usages;
         // Makes sure that the Command Handler doesn't accidentally throw a Null Pointer Exception whilst checking through aliases.
         this.aliases = Objects.requireNonNullElseGet(aliases, ArrayList::new);
         this.requiresOp = requiresOp;
@@ -63,23 +74,19 @@ public abstract class AbstractCommand {
      * /deathswap [name] [args...]
      *
      * @param sender The thing that executed the command. Could be an Entity, the Console, a Block, or something else that I forgot about.
-     * @param command The Bukkit Command which is being executed.
-     * @param label The Alias of the Command which was used.
      * @param args All arguments provided to this specific command. "Arguments" are values provided after the plugin command and the base command.
      *             e.g /deathswap config [swapInterval] [500]
      *             where the values in brackets are arguments.
      */
-    public abstract void execute(CommandSender sender, Command command, String label, String[] args);
+    public abstract void execute(CommandSender sender, String[] args);
 
     /**
      * Gets the autocomplete list of this Command.
      * @param sender The thing/person/object that executed the command.
-     * @param command The Command which is being executed.
-     * @param alias The Alias of the Command which was used.
      * @param args The arguments provided to this specific command, works the same as with the execute() method.
      * @return The list of autocomplete options to display to the user.
      */
-    public List<String> complete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> complete(CommandSender sender, String[] args) {
         return null;
     }
 

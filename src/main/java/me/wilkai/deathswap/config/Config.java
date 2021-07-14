@@ -45,11 +45,7 @@ public class Config {
     @ConfigElement(name = "Show Timer", summary = "Displays a Timer at the Top of your screen of how long is left until the Next Swap.")
     public boolean showTimer = false;
 
-    @ConfigElement(name = "Kick Players on Leave", summary = "Kicks Players from the Deathswap if they leave the Server")
-    public boolean kickPlayersOnLeave = true;
-
     public String portalLightDenied = "§7§oGod whispers to you: Sorry buddy but we can't have any of that funny portal business around here.";
-    public String playerLeaveServer = "§c<player> was removed from the Deathswap as they left the server.";
     public String deathswapBegin = "§a§lThe Deathswap has begun!";
     public String gracePeriodWarning = "§a<minutes> Minutes until Grace Period ends.";
     public String gracePeriodFinalWarning = "§a1 Minute until Grace Period ends.";

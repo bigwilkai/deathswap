@@ -1,16 +1,18 @@
-package me.wilkai.deathswap.command;
+package me.wilkai.deathswap.command.impl;
 
 import me.wilkai.deathswap.Deathswap;
+import me.wilkai.deathswap.command.AbstractCommand;
+import me.wilkai.deathswap.command.CommandInfo;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class StartCommand extends AbstractCommand {
 
     public StartCommand() {
-        super("start", "command.start.summary", null, true);
+        super(new CommandInfo("start").setSummary("Starts the Deathswap"));
     }
 
-    public void execute(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
         Deathswap deathswap = plugin.getDeathswap();
 
         if(deathswap.hasStarted()) {

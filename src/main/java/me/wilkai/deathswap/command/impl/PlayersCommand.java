@@ -1,5 +1,7 @@
-package me.wilkai.deathswap.command;
+package me.wilkai.deathswap.command.impl;
 
+import me.wilkai.deathswap.command.AbstractCommand;
+import me.wilkai.deathswap.command.CommandInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -11,10 +13,15 @@ import java.util.List;
 public class PlayersCommand extends AbstractCommand {
 
     public PlayersCommand() {
-        super("players", "Add, Remove and List Players in the Deathswap.", null, true);
+        super(new CommandInfo("players")
+                .setSummary("Add, Remove and List Players in the Deathswap.")
+                .addUsage("add <player>")
+                .addUsage("remove <player>")
+                .addUsage("list")
+                .setRequiresOp(true));
     }
 
-    public void execute(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
         if(args.length == 0) {
             String b = """
                     §cYou need to specify an Argument!\s
@@ -136,7 +143,7 @@ public class PlayersCommand extends AbstractCommand {
         }
     }
 
-    public List<String> complete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> complete(CommandSender sender, String[] args) {
         List<String> autocomp = new ArrayList<>();
 
         if(args.length == 1) {

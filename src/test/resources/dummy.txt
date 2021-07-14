@@ -1,0 +1,11 @@
+hai
+
+This file has essentially no purpose other than it stops github from compacting the test folder
+into "test/java/me/wilkai/deathswap/test", instead just showing "test".
+
+This makes the project easier to navigate over there because I always end up clicking on the test
+folder because it stands out much more than "main".
+
+This file is not included in the compiled plugin so don't worry about space issues.
+
+It is here to tidy up the project and here it shall stay.

@@ -1,9 +1,7 @@
-package me.wilkai.deathswap;
+package me.wilkai.deathswap.listener;
 
 import me.wilkai.deathswap.Deathswap;
 import me.wilkai.deathswap.DeathswapPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -12,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 
 import java.util.Random;
@@ -20,7 +17,7 @@ import java.util.Random;
 /**
  * Class which Listens for Events that are related to the Deathswap.
  */
-public class EventListener implements Listener {
+public class ListenerAll implements Listener {
 
     /**
      * The Active Deathswap Instance.
@@ -61,7 +58,7 @@ public class EventListener implements Listener {
      * Creates a new Instance of the Event Listener Class with the Plugin provided,
      * @param plugin The instance of the Deathswap Plugin.
      */
-    public EventListener(DeathswapPlugin plugin) {
+    public ListenerAll(DeathswapPlugin plugin) {
         this.plugin = plugin;
         this.deathswap = plugin.getDeathswap();
     }
@@ -114,23 +111,6 @@ public class EventListener implements Listener {
                         event.setCancelled(true);
                         break;
                     }
-                }
-            }
-        }
-
-    }
-
-    @EventHandler // Called when a Player leaves the Server
-    private void onPlayerQuit(PlayerQuitEvent event) {
-        if(deathswap.hasStarted()) {
-            Player player = event.getPlayer();
-
-            if(deathswap.getConfig().kickPlayersOnLeave && deathswap.getPlayers().contains(player)) {
-                Bukkit.broadcastMessage(deathswap.getConfig().playerLeaveServer.replace("<player>", player.getDisplayName()));
-                deathswap.getPlayers().remove(player);
-
-                if(deathswap.getPlayers().size() < 2) {
-                    deathswap.stop();
                 }
             }
         }

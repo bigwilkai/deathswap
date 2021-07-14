@@ -3,6 +3,8 @@ package me.wilkai.deathswap;
 import javax.swing.*;
 import java.awt.*;
 
+import net.md_5.bungee.api.chat.TextComponent;
+
 /**
  * This class is not the main class of the plugin, instead it is the main class of the Jar which will be called if the file is executed manually.
  * This file will simply tell the Player that they should put the Plugin inside of their /plugins/ directory.

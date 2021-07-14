@@ -1,7 +1,9 @@
 package me.wilkai.deathswap;
 
+import me.wilkai.deathswap.command.CommandHandler;
+import me.wilkai.deathswap.command.impl.*;
+import me.wilkai.deathswap.listener.ListenerAll;
 import me.wilkai.deathswap.util.ConfigUtils;
-import me.wilkai.deathswap.command.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,11 +35,12 @@ public final class DeathswapPlugin extends JavaPlugin {
         this.handler = new CommandHandler();
         handler.register(new HelpCommand());
         handler.register(new StartCommand());
+        handler.register(new AboutCommand());
         handler.register(new CancelCommand());
         handler.register(new ConfigCommand());
         handler.register(new PlayersCommand());
 
-        Bukkit.getPluginManager().registerEvents(new EventListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ListenerAll(this), this);
     }
 
     @Override

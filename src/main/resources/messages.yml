@@ -11,10 +11,6 @@
 #  the portal still won't light though, the message just can't be sent.
 portalLightDenied: "§7§oGod whispers to you: Sorry buddy but we can't have any of that funny portal business around here."
 
-# Displayed to all Players if a Player leaves the Server that is involved in the Deathswap.
-# <player> will be replaced with the Player's Display Name.
-playerLeaveServer: "§c<player> was removed from the Deathswap as they left the server."
-
 # Displayed when the Deathswap begins.
 deathswapBegin: "§a§lThe Deathswap has begun!"
 
