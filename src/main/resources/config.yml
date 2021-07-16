@@ -20,8 +20,13 @@ allowPvp: false
 # Should travel to the Nether be completely disabled?
 # You may want to disable this as if a Player reaches the Nether very quickly it's effectively a Checkmate as there's very few ways to survive.
 # Par Exemple: https://youtu.be/vXS1pXWslxs?t=937
-# Default: false
-allowNether: false
+# Default: true
+allowNether: true
+
+# Allow Players to avoid Swapping by Pearling just before the Swap occurs?
+# This will only affect pearls thrown prior to a swap.
+# Default: true
+allowPearlSkipping: true
 
 # The amount of Hostile mobs which will be allowed to spawn.
 # This allows you to limit the amount of threats from Mobs so that deaths are a result
@@ -36,3 +41,8 @@ mobSpawnRate: 100
 # Should we display a Timer at the Top of each Players showing how long is left until the Next Swap?
 # Default: false
 showTimer: false
+
+# Should we report Debug information to all online operators?
+# You might want to keep this disabled.
+# Default: false
+debugMode: false

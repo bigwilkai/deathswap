@@ -4,6 +4,7 @@ import me.wilkai.deathswap.command.AbstractCommand;
 import me.wilkai.deathswap.command.CommandInfo;
 import me.wilkai.deathswap.config.Config;
 import me.wilkai.deathswap.config.ConfigElement;
+import me.wilkai.deathswap.util.ConfigUtils;
 import me.wilkai.deathswap.util.StringUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -213,6 +214,7 @@ public class ConfigCommand extends AbstractCommand {
 
                             message += "§r.";
                             sender.sendMessage(message);
+                            ConfigUtils.saveConfig(plugin.getDeathswap().getConfig());
                         }
                         else { // Reset
                             Config defaultConfig = new Config();
@@ -244,6 +246,7 @@ public class ConfigCommand extends AbstractCommand {
 
                                     message += "§r).";
                                     sender.sendMessage(message);
+                                    ConfigUtils.saveConfig(plugin.getDeathswap().getConfig());
 
                                     return;
                                 }

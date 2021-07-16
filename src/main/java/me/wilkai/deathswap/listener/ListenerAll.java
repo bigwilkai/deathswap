@@ -2,6 +2,8 @@ package me.wilkai.deathswap.listener;
 
 import me.wilkai.deathswap.Deathswap;
 import me.wilkai.deathswap.DeathswapPlugin;
+import me.wilkai.deathswap.util.Debug;
+import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -11,7 +13,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 
 import java.util.Random;
@@ -92,6 +93,7 @@ public class ListenerAll implements Listener {
             Entity entity = event.getEntity();
 
             if(entity != null) { // Send the Entity who lit the portal (if known) a nice friendly message.
+                Debug.log(entity.getCustomName() + " tried to Light a Portal.");
                 entity.sendMessage(deathswap.getConfig().portalLightDenied);
             }
 
@@ -128,6 +130,16 @@ public class ListenerAll implements Listener {
 
                 if(deathswap.getTimeRemaining() + secondsLived >= deathswap.getInitialSwapTime()) { // If the Pearl was thrown before the latest swap.
                     event.setCancelled(true); // Don't teleport the Player.
+
+                    EnderPearl pearl = (EnderPearl) event.getEntity();
+                    Player shooter = (Player)pearl.getShooter();
+
+                    if(shooter == null) {
+                        Debug.log("Unknown Entity tried to throw a Pearl too close to the Swap.");
+                    }
+                    else {
+                        Debug.log(shooter.getDisplayName() + " tried to throw a Pearl too close to the Swap.");
+                    }
                 }
             }
         }

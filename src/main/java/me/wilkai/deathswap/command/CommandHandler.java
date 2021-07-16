@@ -1,7 +1,7 @@
 package me.wilkai.deathswap.command;
 
 import me.wilkai.deathswap.DeathswapPlugin;
-import me.wilkai.deathswap.command.AbstractCommand;
+import me.wilkai.deathswap.util.Debug;
 import me.wilkai.deathswap.util.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -54,6 +54,15 @@ public class CommandHandler implements TabExecutor {
                 if(cmd.matches(args[0])) { // If a command is found which has a matching name/alias to the command issued by the user.
                     String[] arguments = Arrays.copyOfRange(args, 1, args.length); // Cut out the first argument. (Because it will always be the command's name or an alias.
                     cmd.execute(sender, arguments); // Execute the command.
+
+                    StringBuilder fullCommand = new StringBuilder(args[0]);
+
+                    for(String arg : arguments) {
+                        fullCommand.append(" ").append(arg);
+                    }
+
+                    Debug.log(sender.getName() + " executed /deathswap " + fullCommand);
+
                     return true; // Return true because we found a command with a matching name.
                 }
             }

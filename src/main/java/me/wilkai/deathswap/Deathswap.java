@@ -1,6 +1,7 @@
 package me.wilkai.deathswap;
 
 import me.wilkai.deathswap.config.Config;
+import me.wilkai.deathswap.util.Debug;
 import me.wilkai.deathswap.util.LinearTimer;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
@@ -49,6 +50,8 @@ public class Deathswap {
      * <i>Does not verify that all conditions are good, this should be handled by the respective command.</i>
      */
     public void start() {
+        Debug.log("Starting the Deathswap.");
+
         this.started = true;
         this.gracePeriodRemaining = config.gracePeriod;
         this.scheduleNextSwap();
@@ -159,11 +162,16 @@ public class Deathswap {
      * @see Deathswap#cancel() To cancel the Deathswap with no winners.
      */
     public void stop() {
+        Debug.log("Attempting to Stop.");
+
         if(!this.started) {
+            Debug.log("Tried to Stop but failed as Deathswap hasn't been Started.");
             return;
         }
 
         if(players.size() == 0) { // Tie!
+            Debug.log("Stopped Successfully with a Draw.");
+
             String message = config.deathswapTieTitle;
             Bukkit.getOnlinePlayers().forEach(player -> {
                 player.sendTitle(message, config.deathswapTieSubtitle, 40, 100, 10);
@@ -174,6 +182,7 @@ public class Deathswap {
         }
         else if(players.size() > 1) { // Wrong Usage!
             // If there is still more than 1 Player then the Deathswap has not ended yet.
+            Debug.log("Tried to Stop but failed as more than 1 Player lives.");
             return;
         }
         else {
@@ -243,6 +252,7 @@ public class Deathswap {
         });
 
         timer.setVisible(false);
+        Debug.log("Deathswap cancelled.");
     }
 
     /**
@@ -267,6 +277,8 @@ public class Deathswap {
         // It's 5:49 AM I haven't slept in a while and I'm trying to solve algorithmic problems.
         // help
         */
+
+        Debug.log("Swapping Players!");
 
         if (swapPlayersForward) {
             // Where the First Player was prior to Teleporting. (Used to teleport the last Player)
@@ -327,7 +339,10 @@ public class Deathswap {
         else {
             // If the Swap Interval Variation is disabled just set it to the Swap Interval.
             initialSwapTime = config.swapInterval;
+            timeRemaining = initialSwapTime;
         }
+
+        Debug.log("Scheduled next swap to occur in " + initialSwapTime + " seconds.");
     }
 
     /**

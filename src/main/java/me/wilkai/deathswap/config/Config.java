@@ -40,13 +40,16 @@ public class Config {
      * Deathswap and it would require pretty insane luck to survive.
      */
     @ConfigElement(name = "Allow Nether", summary = "Should Players be allowed to enter the Nether?")
-    public boolean allowNether = false;
+    public boolean allowNether = true;
 
     @ConfigElement(name = "Show Timer", summary = "Displays a Timer at the Top of your screen of how long is left until the Next Swap.")
     public boolean showTimer = false;
 
     @ConfigElement(name = "Allow Pearl Skipping", summary = "Allow Players to teleport with an Ender Pearl which was thrown before the current swap.")
     public boolean allowPearlSkipping = true;
+
+    @ConfigElement(name = "Debug Mode", summary = "Sends debug info to operators.")
+    public boolean debugMode = false;
 
     public String portalLightDenied = "§7§oGod whispers to you: Sorry buddy but we can't have any of that funny portal business around here.";
     public String deathswapBegin = "§a§lThe Deathswap has begun!";

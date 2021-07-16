@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 /**
@@ -33,7 +34,7 @@ public class ConfigUtils {
         FileConfiguration messages = new YamlConfiguration();
 
         try {
-            messages.load(new File("messages.yml"));
+            messages.load(new File("plugins/Deathswap/messages.yml"));
         }
         catch (Exception e) {
             Bukkit.getLogger().warning("Failed to load messages.yml! Defaulting to default Messages.\nCause: " + e.getMessage());
@@ -83,6 +84,13 @@ public class ConfigUtils {
             catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+        }
+
+        try {
+            plugin.getConfig().save("plugins/Deathswap/config.yml");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
