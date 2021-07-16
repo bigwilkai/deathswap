@@ -57,7 +57,7 @@ public class Config {
     public String deathswapTieSubtitle = "§6Nobody Won :(";
     public String deathswapDefeatTitle = "§6<winner>§e wins!";
     public String deathswapDefeatSubtitle = "§eSucks to be you lmao.";
-    public String deathswapVictoryTitle = "You §e won!";
+    public String deathswapVictoryTitle = "§6You§e won!";
     public String deathswapVictorySubtitle = "§eGood Job! :)";
     public String deathswapCancelled = "§cDeathswap has been cancelled! :(";
 

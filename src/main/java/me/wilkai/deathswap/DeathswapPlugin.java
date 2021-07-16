@@ -39,6 +39,7 @@ public final class DeathswapPlugin extends JavaPlugin {
         handler.register(new CancelCommand());
         handler.register(new ConfigCommand());
         handler.register(new PlayersCommand());
+        handler.register(new TutorialCommand());
 
         Bukkit.getPluginManager().registerEvents(new ListenerAll(this), this);
     }

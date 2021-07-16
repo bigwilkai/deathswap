@@ -51,7 +51,7 @@ deathswapDefeatTitle: "§6<winner>§e wins!"
 deathswapDefeatSubtitle: "§eSucks to be you lmao."
 
 # Displayed to the Winner of the Deathswap.
-deathswapVictoryTitle: "You §e won!"
+deathswapVictoryTitle: "§6You§e won!"
 
 # Also displayed to the Winner of the Deathswap.
 deathswapVictorySubtitle: "§eGood Job! :)"

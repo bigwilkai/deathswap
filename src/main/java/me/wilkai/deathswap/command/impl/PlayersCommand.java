@@ -3,7 +3,6 @@ package me.wilkai.deathswap.command.impl;
 import me.wilkai.deathswap.command.AbstractCommand;
 import me.wilkai.deathswap.command.CommandInfo;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
