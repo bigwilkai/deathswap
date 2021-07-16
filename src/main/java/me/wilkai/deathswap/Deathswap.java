@@ -159,6 +159,10 @@ public class Deathswap {
      * @see Deathswap#cancel() To cancel the Deathswap with no winners.
      */
     public void stop() {
+        if(!this.started) {
+            return;
+        }
+
         if(players.size() == 0) { // Tie!
             String message = config.deathswapTieTitle;
             Bukkit.getOnlinePlayers().forEach(player -> {
@@ -349,6 +353,14 @@ public class Deathswap {
      */
     public void setConfig(Config config) {
         this.config = config;
+    }
+
+    public int getInitialSwapTime() {
+        return this.timeRemaining;
+    }
+
+    public int getTimeRemaining() {
+        return this.timeRemaining;
     }
 
     /**

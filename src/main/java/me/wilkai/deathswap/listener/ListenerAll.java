@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 
@@ -93,6 +94,8 @@ public class ListenerAll implements Listener {
             if(entity != null) { // Send the Entity who lit the portal (if known) a nice friendly message.
                 entity.sendMessage(deathswap.getConfig().portalLightDenied);
             }
+
+            event.setCancelled(true);
         }
     }
 
@@ -112,6 +115,19 @@ public class ListenerAll implements Listener {
                         event.setCancelled(true);
                         break;
                     }
+                }
+            }
+        }
+    }
+
+    @EventHandler // When any Projectile contacts a surface.
+    private void onProjectileHit(ProjectileHitEvent event) {
+        if(deathswap.hasStarted() && !deathswap.getConfig().allowPearlSkipping) { // If the Deathswap is ongoing and we don't allow Pearl Skipping.
+            if(event.getEntityType() == EntityType.ENDER_PEARL) { // If the Projectile is an Ender Pearl.
+                int secondsLived = event.getEntity().getTicksLived() / 20; // Find out when the Pearl was thrown.
+
+                if(deathswap.getTimeRemaining() + secondsLived >= deathswap.getInitialSwapTime()) { // If the Pearl was thrown before the latest swap.
+                    event.setCancelled(true); // Don't teleport the Player.
                 }
             }
         }
