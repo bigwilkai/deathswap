@@ -51,10 +51,7 @@ Deathswap provides 8 Config Options to allow you to control the Games behaviour!
 > Controls whether Players can light Nether Portals or not.  
 
 > ### Show Timer  
-> Displays a Timer at the top of your Game showing how long is left of the Grace Period or until the next swap.  
-
-> ### Kick Players on Leave  
-> Whether or not Deathswap should remove Players from the Game if they leave.  
+> Displays a Timer at the top of your Game showing how long is left of the Grace Period or until the next swap.    
 
 ### Commands  
 *All Commands start with /deathswap.*  
