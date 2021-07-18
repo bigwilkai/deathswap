@@ -46,14 +46,16 @@ public class CommandHandler implements TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command bukkitCommand, String commandLabel, String[] args) {
         if(args.length > 0) {
+            String commanda = args[0];
+
             // Loop through all registered commands.
-            for(AbstractCommand cmd : commands) {
-                if(!sender.isOp() && cmd.requiresOp) { continue; }
-                if(cmd.matches(args[0])) { // If a command is found which has a matching name/alias to the command issued by the user.
+            for(AbstractCommand command : commands) {
+                if(!sender.isOp() && command.requiresOp) { continue; }
+                if(command.matches(args[0])) { // If a command is found which has a matching name/alias to the command issued by the user.
                     String[] arguments = Arrays.copyOfRange(args, 1, args.length); // Cut out the first argument. (Because it will always be the command's name or an alias.
-                    cmd.execute(sender, arguments); // Execute the command.
+                    command.execute(sender, arguments); // Execute the command.
 
                     StringBuilder fullCommand = new StringBuilder(args[0]);
 
@@ -69,13 +71,13 @@ public class CommandHandler implements TabExecutor {
 
             // The user has entered an unknown command, find the closest match to what they entered.
             List<String> commandNames = new ArrayList<>();
-            for(AbstractCommand cmd : commands) {
-                if(!sender.isOp() && cmd.requiresOp) {
+            for(AbstractCommand command : commands) {
+                if(!sender.isOp() && command.requiresOp) {
                     continue; // Don't ask the Player if they meant a Command they are not allowed to use.
                 }
 
-                commandNames.add(cmd.name);
-                commandNames.addAll(cmd.aliases);
+                commandNames.add(command.name);
+                commandNames.addAll(command.aliases);
             }
 
             // Put all names & aliases in an array.
@@ -140,28 +142,28 @@ public class CommandHandler implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command bukkitCommand, String alias, String[] args) {
         List<String> autocomp = new ArrayList<>();
 
         if(args.length == 1) { // If the user has typed /deathswap ...
-            for(AbstractCommand subcommand : commands) {
-                if(!sender.isOp() && subcommand.requiresOp) {
+            for(AbstractCommand command : commands) {
+                if(!sender.isOp() && command.requiresOp) {
                     continue; // Don't add Operator-Only commands if the Player is not an Operator.
                 }
 
-                autocomp.add(subcommand.name); // Add the names of all registered commands.
+                autocomp.add(command.name); // Add the names of all registered commands.
             }
         }
         else { // If the user has provided a second argument (/deathswap <subcommand> ...)
             String string = args[0];
 
-            for(AbstractCommand cmd : commands) { // Loop through all known commands and try to find a match to the provided subcommand.
-                if(!sender.isOp() && cmd.requiresOp) {
+            for(AbstractCommand command : commands) { // Loop through all known commands and try to find a match to the provided subcommand.
+                if(!sender.isOp() && command.requiresOp) {
                     continue; // Don't add Operator-Only commands if the Player is not an Operator.
                 }
 
-                if(cmd.matches(string)) { // If we find a match, get its autocomplete options.
-                    List<String> commandAutocomp = cmd.complete(sender, Arrays.copyOfRange(args, 1, args.length));
+                if(command.matches(string)) { // If we find a match, get its autocomplete options.
+                    List<String> commandAutocomp = command.complete(sender, Arrays.copyOfRange(args, 1, args.length));
 
                     // Prevents a Null Pointer Exception from being thrown if the command doesn't return any tab completions.
                     if(commandAutocomp != null) {

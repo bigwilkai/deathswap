@@ -9,14 +9,14 @@ import org.bukkit.entity.Player;
 /**
  * A Timer Utility class based off Minecraft's Bossbar.
  */
-public class LinearTimer {
+public class BossbarTimer {
 
     private final BossBar bossbar;
 
     private double max;
     private CountType countType;
 
-    public LinearTimer(String title) {
+    public BossbarTimer(String title) {
         bossbar = Bukkit.createBossBar(title, BarColor.RED, BarStyle.SOLID);
         max = 100.0d;
         countType = CountType.COUNTDOWN;

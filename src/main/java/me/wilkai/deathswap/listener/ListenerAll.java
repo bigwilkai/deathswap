@@ -54,7 +54,7 @@ public class ListenerAll implements Listener {
             EntityType.CAVE_SPIDER,
             EntityType.PIGLIN_BRUTE,
             EntityType.ZOMBIE_VILLAGER,
-            EntityType.WITHER_SKELETON
+            EntityType.WITHER_SKELETON,
     };
 
     /**

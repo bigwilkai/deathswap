@@ -10,7 +10,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Field;
@@ -111,25 +110,25 @@ public class ConfigCommand extends AbstractCommand {
                                 return;
                             }
 
-                            String stringValue = args[2];
+                            String input = args[2];
 
                             if (type.equals(boolean.class)) {
                                 boolean value;
-                                if (stringValue.equalsIgnoreCase("true")) {
+                                if (input.equalsIgnoreCase("true")) {
                                     value = true;
                                     message += "§atrue";
-                                } else if (stringValue.equalsIgnoreCase("false")) {
+                                } else if (input.equalsIgnoreCase("false")) {
                                     value = false;
                                     message += "§cfalse";
                                 } else {
-                                    sender.sendMessage("§c" + element.name() + " cannot be set to " + stringValue + " it can only be set to true or false.");
+                                    sender.sendMessage("§c" + element.name() + " cannot be set to " + input + " it can only be set to true or false.");
                                     return;
                                 }
 
                                 field.setBoolean(plugin.getDeathswap().getConfig(), value);
                             } else if (type.equals(float.class) || type.equals(double.class)) {
                                 try {
-                                    double value = Double.parseDouble(stringValue);
+                                    double value = Double.parseDouble(input);
 
                                     if (value > element.max()) {
                                         sender.sendMessage("§c" + element.name() + " cannot be set any higher than " + element.max() + ".");
@@ -142,12 +141,12 @@ public class ConfigCommand extends AbstractCommand {
                                     field.set(plugin.getDeathswap().getConfig(), value);
                                     message += "§b" + value;
                                 } catch (NumberFormatException e) {
-                                    sender.sendMessage("§c" + element.name() + " expects a double but §e" + stringValue + "§c is not a double.");
+                                    sender.sendMessage("§c" + element.name() + " expects a double but §e" + input + "§c is not a double.");
                                     return;
                                 }
                             } else if (type.equals(short.class)) {
                                 try {
-                                    short value = Short.parseShort(stringValue);
+                                    short value = Short.parseShort(input);
 
                                     if (value > element.max()) {
                                         sender.sendMessage("§c" + element.name() + " cannot be set any higher than " + element.max() + ".");
@@ -161,12 +160,12 @@ public class ConfigCommand extends AbstractCommand {
 
                                     field.setShort(plugin.getDeathswap().getConfig(), value);
                                 } catch (NumberFormatException e) {
-                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + stringValue + "§c is not a number.");
+                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + input + "§c is not a number.");
                                     return;
                                 }
                             } else if (type.equals(int.class)) {
                                 try {
-                                    int value = Integer.parseInt(stringValue);
+                                    int value = Integer.parseInt(input);
 
                                     if (value > element.max()) {
                                         sender.sendMessage("§c" + element.name() + " cannot be set any higher than " + element.max() + ".");
@@ -180,12 +179,12 @@ public class ConfigCommand extends AbstractCommand {
 
                                     field.setInt(plugin.getDeathswap().getConfig(), value);
                                 } catch (NumberFormatException e) {
-                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + stringValue + "§c is not a number.");
+                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + input + "§c is not a number.");
                                     return;
                                 }
                             } else if (type.equals(long.class)) {
                                 try {
-                                    long value = Long.parseLong(stringValue);
+                                    long value = Long.parseLong(input);
 
                                     if (value > element.max()) {
                                         sender.sendMessage("§c" + element.name() + " cannot be set any higher than " + element.max() + ".");
@@ -199,13 +198,13 @@ public class ConfigCommand extends AbstractCommand {
 
                                     field.setLong(plugin.getDeathswap().getConfig(), value);
                                 } catch (NumberFormatException e) {
-                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + stringValue + "§c is not a number.");
+                                    sender.sendMessage("§c" + element.name() + " is supposed to be a number but §e" + input + "§c is not a number.");
                                     return;
                                 }
                             } else { // This is not a catch-all case as it only supports Strings.
                                 try {
-                                    field.set(plugin.getDeathswap().getConfig(), stringValue);
-                                    message += "§e\"" + stringValue + "\"";
+                                    field.set(plugin.getDeathswap().getConfig(), input);
+                                    message += "§e\"" + input + "\"";
                                 } catch (IllegalArgumentException e) {
                                     sender.sendMessage("§c" + type.getTypeName() + " is not supported by Deathswap's Config.");
                                     return;

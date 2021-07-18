@@ -1,7 +1,6 @@
 package me.wilkai.deathswap.command;
 
 import me.wilkai.deathswap.DeathswapPlugin;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;

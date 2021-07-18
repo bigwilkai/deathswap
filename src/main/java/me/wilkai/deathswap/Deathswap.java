@@ -2,7 +2,7 @@ package me.wilkai.deathswap;
 
 import me.wilkai.deathswap.config.Config;
 import me.wilkai.deathswap.util.Debug;
-import me.wilkai.deathswap.util.LinearTimer;
+import me.wilkai.deathswap.util.BossbarTimer;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -27,7 +27,7 @@ public class Deathswap {
     private final ArrayList<Player> players; // The list of all Living Players.
     private Config config; // The Configuration that Dictates how the Game should Behave.
     private BukkitTask task; // Task that is executed every second, counts down to the end of the Grace Period and the occurrence of the Next Swap.
-    private LinearTimer timer; // Timer at the top of the Players screen displaying time until next swap. (And time until Grace Period ends)
+    private BossbarTimer timer; // Timer at the top of the Players screen displaying time until next swap. (And time until Grace Period ends)
     private boolean started; // Has the Deathswap Started?
     private int gracePeriodRemaining; // How many seconds remain of the Grace Period.
     private int initialSwapTime; // The time between the last swap and the next swap.
@@ -58,7 +58,7 @@ public class Deathswap {
 
         Bukkit.broadcastMessage(config.deathswapBegin);
 
-        timer = new LinearTimer("Timer");
+        timer = new BossbarTimer("Timer");
         timer.setColor(BarColor.WHITE);
         timer.setStyle(BarStyle.SOLID);
 
@@ -78,7 +78,7 @@ public class Deathswap {
         }
         else { // No Grace Period - Change the Timer to display time till next Swap.
             timer.setColor(BarColor.RED);
-            timer.setCountType(LinearTimer.CountType.COUNTUP);
+            timer.setCountType(BossbarTimer.CountType.COUNTUP);
             timer.setMax(initialSwapTime);
             timer.setProgress(0);
             timer.setTitle("Next Swap");
@@ -103,7 +103,7 @@ public class Deathswap {
                             message = config.gracePeriodEnd;
 
                             timer.setColor(BarColor.RED);
-                            timer.setCountType(LinearTimer.CountType.COUNTUP);
+                            timer.setCountType(BossbarTimer.CountType.COUNTUP);
                             timer.setMax(initialSwapTime);
                             timer.setProgress(0);
                             timer.setTitle("Next Swap");
