@@ -25,7 +25,7 @@ Deathswap has support for more than 2 Players!
 *To make things a little more fair*  
 
 ### 7 Config Settings  
-Deathswap provides 8 Config Options to allow you to control the Games behaviour!  
+Deathswap provides 7 Config Options to allow you to control the Games behaviour!  
 
 > ### Swap Interval  
 > The amount of time in seconds between each swap.  
