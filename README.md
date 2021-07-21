@@ -60,3 +60,5 @@ Deathswap provides 7 Config Options to allow you to control the Games behaviour!
 `players <add | remove | list>` - Adds, Removes or Lists Players.  
 `help` - Displays a list of Commands.  
 `config <get | set | reset | help>` - Allows for the viewing and changing of Config Settings without having to change the config.yml.  
+`tutorial` - Explains what Deathswap is and how to start it.
+`about` - Displays information about the Deathswap Plugin.
